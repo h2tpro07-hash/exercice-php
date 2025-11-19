@@ -1,6 +1,6 @@
 <?php
 try {
-    $mysqlClient = new PDO(
+    $mysqlClient = new PDO (
         'mysql:host=localhost;dbname=jo;charset=utf8',
         'root',
         ''
@@ -9,20 +9,18 @@ try {
     die($e->getMessage());
 }
 
-// ----------------------------
-// Gestion du tri ($_GET)
-// ----------------------------
-$sort = "nom";   // tri par défaut
+
+$sort = "nom";  
 if (isset($_GET['sort'])) {
     $sort = $_GET['sort'];
 }
 
-$order = "asc";  // ordre par défaut
+$order = "asc";  
 if (isset($_GET['order'])) {
     $order = $_GET['order'];
 }
 
-// Whitelist pour éviter les injections SQL
+
 $allowedSort = ["nom", "pays", "course", "temps"];
 $allowedOrder = ["asc", "desc"];
 
@@ -34,7 +32,7 @@ if (!in_array($order, $allowedOrder)) {
     $order = "asc";
 }
 
-// Requête SQL avec ORDER BY
+
 $sql = "SELECT * FROM jo.`100` ORDER BY $sort $order";
 
 $query = $mysqlClient->prepare($sql);
