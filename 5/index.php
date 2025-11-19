@@ -1,5 +1,5 @@
 <?php
-// --------------- Connexion PDO ---------------
+
 try {
     $mysqlClient = new PDO(
         'mysql:host=localhost;dbname=jo;charset=utf8',
@@ -11,12 +11,12 @@ try {
     die("Erreur PDO : " . $e->getMessage());
 }
 
-// --------------- Récupération des filtres POST ---------------
+
 $filtreNom = "";
 $filtrePays = "";
 $filtreCourse = "";
-$filtreTempsMin = ""; // valeur minimale (exemple 9.5)
-$filtreTempsMax = ""; // valeur maximale (exemple 12.3)
+$filtreTempsMin = ""; 
+$filtreTempsMax = ""; 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $filtreNom = isset($_POST["filtre_nom"]) ? trim($_POST["filtre_nom"]) : "";
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $filtreTempsMax = isset($_POST["filtre_temps_max"]) ? trim($_POST["filtre_temps_max"]) : "";
 }
 
-// --------------- Tri via GET (flèches) ---------------
+
 $sort = "nom";
 if (isset($_GET['sort'])) {
     $sort = $_GET['sort'];
@@ -46,11 +46,11 @@ if (!in_array($order, $allowedOrder)) {
     $order = "asc";
 }
 
-// --------------- Construction dynamique de la requête et des paramètres ---------------
+
 $whereClauses = [];
 $params = [];
 
-// filtres texte -> LIKE
+
 if ($filtreNom !== "") {
     $whereClauses[] = "nom LIKE :nom";
     $params[':nom'] = "%$filtreNom%";
@@ -64,7 +64,7 @@ if ($filtreCourse !== "") {
     $params[':course'] = "%$filtreCourse%";
 }
 
-// filtres temps -> min/max numériques (si fournis et valides)
+
 if ($filtreTempsMin !== "" && is_numeric($filtreTempsMin)) {
     $whereClauses[] = "temps >= :tempsMin";
     $params[':tempsMin'] = (float)$filtreTempsMin;
@@ -74,20 +74,20 @@ if ($filtreTempsMax !== "" && is_numeric($filtreTempsMax)) {
     $params[':tempsMax'] = (float)$filtreTempsMax;
 }
 
-// Assemblage final WHERE
+
 $whereSQL = "";
 if (!empty($whereClauses)) {
     $whereSQL = "WHERE " . implode(" AND ", $whereClauses);
 }
 
-// Requête complète (table jo.`100`)
+
 $sql = "SELECT * FROM jo.`100` $whereSQL ORDER BY $sort $order";
 
 $stmt = $mysqlClient->prepare($sql);
 $stmt->execute($params);
 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// fermer la connexion
+
 $mysqlClient = null;
 ?>
 
