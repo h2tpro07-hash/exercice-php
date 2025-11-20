@@ -1,18 +1,16 @@
 <?php
 session_start();
 
-// FICHIER JSON
+
 $usersFile = "users.json";
 
-// Charger les utilisateurs depuis le fichier JSON
+
 if (!file_exists($usersFile)) {
     file_put_contents($usersFile, json_encode([]));
 }
 $users = json_decode(file_get_contents($usersFile), true);
 
-// -----------------------------------
-// DECONNEXION
-// -----------------------------------
+
 if (isset($_GET['logout'])) {
     session_unset();
     session_destroy();
@@ -20,26 +18,24 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-// ---------------------------
-// INSCRIPTION
-// ---------------------------
+
 if (isset($_POST['action']) && $_POST['action'] === "register") {
 
     $username = trim($_POST['register_username']);
     $password = trim($_POST['register_password']);
 
-    // Champs vides
+   
     if (empty($username)) {
         $registerError = "Le champ username est vide.";
     } elseif (empty($password)) {
         $registerError = "Le champ password est vide.";
     }
-    // Username déjà existant
+   
     elseif (isset($users[$username])) {
         $registerError = "Ce nom d'utilisateur existe déjà.";
     }
     else {
-        // Sauvegarde utilisateur dans le JSON
+        
         $users[$username] = password_hash($password, PASSWORD_DEFAULT);
         file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
 
@@ -47,25 +43,23 @@ if (isset($_POST['action']) && $_POST['action'] === "register") {
     }
 }
 
-// ---------------------------
-// CONNEXION
-// ---------------------------
+
 if (isset($_POST['action']) && $_POST['action'] === "login") {
 
     $username = trim($_POST['login_username']);
     $password = trim($_POST['login_password']);
 
-    // Champs vides
+    
     if (empty($username)) {
         $loginError = "Le champ username est vide.";
     } elseif (empty($password)) {
         $loginError = "Le champ password est vide.";
     }
-    // Username existe ?
+   
     elseif (!isset($users[$username])) {
         $loginError = "Le nom d'utilisateur n'existe pas.";
     }
-    // Mot de passe valide ?
+   
     elseif (!password_verify($password, $users[$username])) {
         $loginError = "Mot de passe invalide.";
     }
@@ -74,9 +68,7 @@ if (isset($_POST['action']) && $_POST['action'] === "login") {
     }
 }
 
-// ---------------------------
-// SI CONNECTÉ
-// ---------------------------
+
 if (isset($_SESSION['username'])) {
     echo "<h1>Bonjour " . htmlspecialchars($_SESSION['username']) . "</h1>";
     echo '<a href="?logout=1"><button>Déconnexion</button></a>';
@@ -100,7 +92,7 @@ if (isset($_SESSION['username'])) {
 </head>
 <body>
 
-<!-- FORMULAIRE DE CONNEXION -->
+
 <div class="box">
 <h2>Connexion</h2>
 <?php if (isset($loginError)) echo "<p class='error'>$loginError</p>"; ?>
@@ -117,7 +109,7 @@ if (isset($_SESSION['username'])) {
 </form>
 </div>
 
-<!-- FORMULAIRE D’INSCRIPTION -->
+
 <div class="box">
 <h2>Inscription</h2>
 <?php if (isset($registerError)) echo "<p class='error'>$registerError</p>"; ?>
