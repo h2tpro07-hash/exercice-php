@@ -1,21 +1,21 @@
 <?php
-// TP 7 - Variable de session (Login simple)
+
 session_start();
 
-// Déconnexion
+
 if (isset($_GET['logout'])) {
-    session_unset();   // Supprime toutes les variables de session
-    session_destroy(); // Détruit la session
-    header("Location: index.php"); // Redirection vers la page de login
+    session_unset();  
+    session_destroy(); 
+    header("Location: index.php"); 
     exit();
 }
 
-// Traitement du formulaire
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
     $_SESSION['username'] = htmlspecialchars($_POST['username']);
 }
 
-// Vérifier si la variable de session username existe
+
 if (isset($_SESSION['username'])) {
     echo "<h1>Bonjour " . $_SESSION['username'] . "</h1>";
     echo '<a href="?logout=1"><button>Déconnexion</button></a>';
